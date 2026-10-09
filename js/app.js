@@ -84,6 +84,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const elPosterSpeed = document.getElementById('poster-speed-val');
   const elPosterAccuracy = document.getElementById('poster-accuracy-val');
 
+  // 主题皮肤模态框与切换按钮引用
+  const elBtnTheme = document.getElementById('btn-theme');
+  const elModalTheme = document.getElementById('modal-theme');
+  const elBtnCloseTheme = document.getElementById('btn-close-theme');
+  const elThemeCards = document.querySelectorAll('#theme-card-grid .theme-card');
+  const elSettingsThemePills = document.querySelectorAll('#settings-theme-pills .pill-btn');
+
   // 读取已保存的用户设置
   const defaultSettings = {
     gridSize: 4,
@@ -553,6 +560,62 @@ document.addEventListener('DOMContentLoaded', () => {
     elModalShareCard.classList.add('hidden');
   });
 
+  // 6. 个性皮肤主题控制
+  let currentTheme = storageManager.loadTheme();
+
+  function applyTheme(themeId) {
+    currentTheme = themeId;
+    storageManager.saveTheme(themeId);
+    if (themeId === 'default') {
+      document.body.removeAttribute('data-theme');
+    } else {
+      document.body.setAttribute('data-theme', themeId);
+    }
+
+    // 同步皮肤抽屉内卡片激活状态
+    elThemeCards.forEach(card => {
+      card.classList.toggle('active', card.dataset.themeId === themeId);
+    });
+
+    // 同步设置面板内药丸按钮激活状态
+    elSettingsThemePills.forEach(pill => {
+      pill.classList.toggle('active', pill.dataset.theme === themeId);
+    });
+  }
+
+  // 绑定主题卡片点击切换
+  elThemeCards.forEach(card => {
+    card.addEventListener('click', () => {
+      soundEngine.initAudioContext();
+      soundEngine.playTap(0);
+      applyTheme(card.dataset.themeId);
+    });
+  });
+
+  // 绑定设置抽屉内皮肤药丸按钮切换
+  elSettingsThemePills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      soundEngine.initAudioContext();
+      soundEngine.playTap(0);
+      applyTheme(pill.dataset.theme);
+    });
+  });
+
+  // 主题抽屉开启与关闭
+  elBtnTheme.addEventListener('click', () => {
+    elModalTheme.classList.remove('hidden');
+  });
+
+  elBtnCloseTheme.addEventListener('click', () => {
+    elModalTheme.classList.add('hidden');
+  });
+
+  elModalTheme.addEventListener('click', (e) => {
+    if (e.target === elModalTheme) {
+      elModalTheme.classList.add('hidden');
+    }
+  });
+
   // 模态框背景点击自动关闭
   elModalLeaderboard.addEventListener('click', (e) => {
     if (e.target === elModalLeaderboard) {
@@ -569,7 +632,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // 键盘全局快捷键 (空格开始 / ESC 关闭弹窗)
   window.addEventListener('keydown', (e) => {
     if (e.code === 'Space') {
-      if (!elModalSettings.classList.contains('hidden') || !elModalLeaderboard.classList.contains('hidden')) return;
+      if (!elModalSettings.classList.contains('hidden') || 
+          !elModalLeaderboard.classList.contains('hidden') ||
+          !elModalTheme.classList.contains('hidden')) return;
       e.preventDefault();
       soundEngine.initAudioContext();
       if (!elResultOverlay.classList.contains('hidden')) {
@@ -582,12 +647,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!elModalSettings.classList.contains('hidden')) {
         closeSettingsSheet();
       }
+      elModalTheme.classList.add('hidden');
       elModalLeaderboard.classList.add('hidden');
       elModalShareCard.classList.add('hidden');
     }
   });
 
   // 首次运行启动
+  applyTheme(currentTheme);
   syncSettingsModal();
   renderGridShell(userSettings.gridSize);
   updateDashboard();

@@ -273,16 +273,28 @@ body {
   box-sizing: border-box;
 }
 
-/* 状态提示横幅 */
-.status-banner {
+/* 状态提示横幅槽位：严格锁定 38px 高度，保证界面在全流程中零跳动 */
+.status-banner-slot {
+  height: 38px;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 6px;
-  text-align: center;
   flex-shrink: 0;
-  animation: bannerFadeIn 0.3s var(--ease-smooth);
+  width: 100%;
+}
+
+.status-banner {
+  text-align: center;
+  animation: bannerFadeIn 0.25s var(--ease-smooth);
+  transition: opacity 0.25s ease, visibility 0.25s ease;
 }
 
 .status-banner.hidden {
-  display: none;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 #banner-text {
@@ -1256,4 +1268,258 @@ input:checked + .slider.round:before {
 @keyframes bannerFadeIn {
   0% { opacity: 0; transform: translateY(-4px); }
   100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   个性皮肤主题系统 (Global Theme Overrides)
+   ========================================================================== */
+
+/* 1. 禅意原木风 (Natural Wood) */
+body[data-theme="wood"] {
+  --ios-bg: #1c150f;
+  background-color: #1c150f;
+  background-image: 
+    radial-gradient(circle at 50% -10%, rgba(212, 163, 115, 0.22), transparent 50%),
+    radial-gradient(circle at 85% 85%, rgba(180, 142, 107, 0.15), transparent 45%);
+  --ios-surface: rgba(48, 36, 26, 0.82);
+  --ios-surface-solid: #2e2219;
+  --ios-card-glass: rgba(254, 250, 224, 0.08);
+  --ios-card-hover: rgba(254, 250, 224, 0.14);
+  --ios-border: rgba(212, 163, 115, 0.22);
+  --ios-border-subtle: rgba(212, 163, 115, 0.1);
+
+  --ios-primary: #d4a373;
+  --ios-primary-hover: #bc8a5f;
+  --ios-success: #8fbc8f;
+  --ios-warning: #e9c46a;
+  --ios-danger: #e76f51;
+
+  --ios-text: #fefae0;
+  --ios-text-secondary: rgba(254, 250, 224, 0.7);
+  --ios-text-tertiary: rgba(254, 250, 224, 0.4);
+
+  --tile-bg: rgba(180, 142, 107, 0.14);
+  --tile-border: rgba(212, 163, 115, 0.28);
+  --tile-active-bg: #faedcd;
+  --tile-active-text: #332011;
+  --tile-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5);
+}
+
+body[data-theme="wood"] .grid-cell.active.masked {
+  background: linear-gradient(145deg, rgba(212, 163, 115, 0.35), rgba(180, 142, 107, 0.18));
+  border-color: rgba(212, 163, 115, 0.4);
+}
+
+/* 2. 粉红可爱系 (Kawaii Cute Pink) */
+body[data-theme="cute-pink"] {
+  --ios-bg: #1c0e17;
+  background-color: #1c0e17;
+  background-image: 
+    radial-gradient(circle at 50% -10%, rgba(255, 101, 132, 0.25), transparent 50%),
+    radial-gradient(circle at 20% 80%, rgba(255, 174, 188, 0.18), transparent 45%);
+  --ios-surface: rgba(56, 22, 42, 0.82);
+  --ios-surface-solid: #3b172c;
+  --ios-card-glass: rgba(255, 255, 255, 0.09);
+  --ios-card-hover: rgba(255, 255, 255, 0.16);
+  --ios-border: rgba(255, 138, 174, 0.25);
+  --ios-border-subtle: rgba(255, 138, 174, 0.12);
+
+  --ios-primary: #ff6584;
+  --ios-primary-hover: #e04f6e;
+  --ios-success: #5cd89d;
+  --ios-warning: #ffd166;
+  --ios-danger: #ff4d6d;
+
+  --ios-text: #ffffff;
+  --ios-text-secondary: rgba(255, 225, 235, 0.72);
+  --ios-text-tertiary: rgba(255, 225, 235, 0.42);
+
+  --tile-bg: rgba(255, 138, 174, 0.14);
+  --tile-border: rgba(255, 138, 174, 0.3);
+  --tile-active-bg: #fff0f5;
+  --tile-active-text: #b31349;
+  --tile-shadow: 0 8px 24px -4px rgba(255, 101, 132, 0.35);
+}
+
+body[data-theme="cute-pink"] .grid-cell.active.masked {
+  background: linear-gradient(145deg, rgba(255, 138, 174, 0.38), rgba(255, 101, 132, 0.18));
+  border-color: rgba(255, 138, 174, 0.45);
+}
+
+/* 3. 柠檬清新系 (Lemon Fresh Citrus) */
+body[data-theme="lemon"] {
+  --ios-bg: #0c1811;
+  background-color: #0c1811;
+  background-image: 
+    radial-gradient(circle at 50% -10%, rgba(245, 224, 39, 0.2), transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(60, 208, 112, 0.18), transparent 45%);
+  --ios-surface: rgba(20, 42, 28, 0.82);
+  --ios-surface-solid: #15321f;
+  --ios-card-glass: rgba(255, 255, 255, 0.08);
+  --ios-card-hover: rgba(255, 255, 255, 0.15);
+  --ios-border: rgba(245, 224, 39, 0.24);
+  --ios-border-subtle: rgba(245, 224, 39, 0.1);
+
+  --ios-primary: #f5e027;
+  --ios-primary-hover: #d8c418;
+  --ios-success: #3cd070;
+  --ios-warning: #ffb703;
+  --ios-danger: #e63946;
+
+  --ios-text: #ffffff;
+  --ios-text-secondary: rgba(230, 250, 235, 0.72);
+  --ios-text-tertiary: rgba(230, 250, 235, 0.4);
+
+  --tile-bg: rgba(245, 224, 39, 0.1);
+  --tile-border: rgba(245, 224, 39, 0.28);
+  --tile-active-bg: #fffb85;
+  --tile-active-text: #0b2914;
+  --tile-shadow: 0 8px 24px -4px rgba(245, 224, 39, 0.3);
+}
+
+body[data-theme="lemon"] .ios-btn-primary {
+  color: #0b2914;
+  font-weight: 700;
+}
+
+body[data-theme="lemon"] .grid-cell.active.masked {
+  background: linear-gradient(145deg, rgba(245, 224, 39, 0.32), rgba(60, 208, 112, 0.18));
+  border-color: rgba(245, 224, 39, 0.4);
+}
+
+/* 4. 拟态液态玻璃系 (Liquid Glass Neomorphism) */
+body[data-theme="liquid-glass"] {
+  --ios-bg: #070c14;
+  background-color: #070c14;
+  background-image: 
+    radial-gradient(circle at 30% 0%, rgba(0, 242, 254, 0.22), transparent 50%),
+    radial-gradient(circle at 80% 85%, rgba(79, 172, 254, 0.2), transparent 50%);
+  --ios-surface: rgba(255, 255, 255, 0.12);
+  --ios-surface-solid: #121b2b;
+  --ios-card-glass: rgba(255, 255, 255, 0.12);
+  --ios-card-hover: rgba(255, 255, 255, 0.2);
+  --ios-border: rgba(255, 255, 255, 0.22);
+  --ios-border-subtle: rgba(255, 255, 255, 0.1);
+
+  --ios-primary: #00f2fe;
+  --ios-primary-hover: #00c7d4;
+  --ios-success: #00f5a0;
+  --ios-warning: #fbc2eb;
+  --ios-danger: #ff4b72;
+
+  --ios-text: #ffffff;
+  --ios-text-secondary: rgba(215, 235, 255, 0.75);
+  --ios-text-tertiary: rgba(215, 235, 255, 0.45);
+
+  --tile-bg: rgba(255, 255, 255, 0.08);
+  --tile-border: rgba(255, 255, 255, 0.25);
+  --tile-active-bg: linear-gradient(135deg, #ffffff, #c7f3ff);
+  --tile-active-text: #032130;
+  --tile-shadow: 0 10px 30px -4px rgba(0, 242, 254, 0.35);
+}
+
+body[data-theme="liquid-glass"] .glass-panel,
+body[data-theme="liquid-glass"] .game-grid {
+  backdrop-filter: blur(35px);
+  -webkit-backdrop-filter: blur(35px);
+  box-shadow: inset 0 1px 1.5px rgba(255, 255, 255, 0.5), 0 12px 36px rgba(0, 0, 0, 0.5);
+}
+
+body[data-theme="liquid-glass"] .grid-cell.active.masked {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(0, 242, 254, 0.18) 100%);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 1.5px 2px rgba(255, 255, 255, 0.8), 0 6px 20px rgba(0, 242, 254, 0.25);
+}
+
+body[data-theme="liquid-glass"] .ios-btn-primary {
+  color: #032130;
+  font-weight: 700;
+  box-shadow: 0 4px 20px rgba(0, 242, 254, 0.45);
+}
+
+/* ==========================================================================
+   皮肤主题选择器组件样式
+   ========================================================================== */
+.theme-picker-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.theme-picker-pills .pill-btn {
+  flex: 1 1 calc(33.333% - 6px);
+  font-size: 12px;
+  padding: 7px 6px;
+  text-align: center;
+}
+
+.theme-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.theme-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid var(--ios-border-subtle);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s var(--ease-smooth);
+}
+
+.theme-card:hover {
+  background: rgba(255, 255, 255, 0.09);
+  transform: translateY(-1px);
+}
+
+.theme-card.active {
+  border-color: var(--ios-primary);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.theme-preview-dots {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.theme-preview-dots span {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.theme-card-info {
+  flex: 1;
+}
+
+.theme-card-info h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.theme-card-info p {
+  font-size: 11px;
+  color: var(--ios-text-secondary);
+}
+
+.theme-check {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--ios-primary);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.theme-card.active .theme-check {
+  opacity: 1;
 }

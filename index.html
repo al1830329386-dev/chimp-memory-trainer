@@ -27,6 +27,15 @@
         <h1 id="mode-title">瞬时记忆测试</h1>
       </div>
       <div class="nav-right">
+        <button id="btn-theme" class="icon-button" title="个性皮肤" aria-label="皮肤">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+          </svg>
+        </button>
         <button id="btn-leaderboard" class="icon-button" title="排行榜" aria-label="排行榜">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
@@ -81,10 +90,12 @@
 
     <!-- 游戏主舞台 -->
     <main class="game-stage">
-      <!-- 倒计时 / 状态浮层提示 -->
-      <div id="game-status-banner" class="status-banner hidden">
-        <span id="banner-text">记住数字位置</span>
-        <div id="banner-subtext" class="banner-subtext">3 秒后数字将隐藏</div>
+      <!-- 倒计时 / 状态浮层提示槽位 (锁定高度，全局无任何跳动) -->
+      <div class="status-banner-slot">
+        <div id="game-status-banner" class="status-banner hidden">
+          <span id="banner-text">记住数字位置</span>
+          <div id="banner-subtext" class="banner-subtext">3 秒后数字将隐藏</div>
+        </div>
       </div>
 
       <!-- 游戏核心网格 -->
@@ -228,6 +239,18 @@
             <input type="range" id="slider-countdown-time" min="1" max="5" value="3" step="1" class="ios-slider">
           </div>
 
+          <!-- 外观皮肤主题选择 -->
+          <div class="settings-group">
+            <div class="group-header">🎨 个性外观皮肤</div>
+            <div class="theme-picker-pills" id="settings-theme-pills">
+              <button class="pill-btn active" data-theme="default">经典极简</button>
+              <button class="pill-btn" data-theme="wood">禅意原木</button>
+              <button class="pill-btn" data-theme="cute-pink">粉红可爱</button>
+              <button class="pill-btn" data-theme="lemon">柠檬清新</button>
+              <button class="pill-btn" data-theme="liquid-glass">液态玻璃</button>
+            </div>
+          </div>
+
           <!-- 辅助设置 -->
           <div class="settings-group">
             <div class="group-toggle-row">
@@ -243,6 +266,90 @@
                 <input type="checkbox" id="toggle-scale-pitch" checked>
                 <span class="slider round"></span>
               </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 个性皮肤主题专属抽屉 -->
+    <div id="modal-theme" class="ios-modal-backdrop hidden">
+      <div class="ios-sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <h3>个性皮肤主题</h3>
+          <button id="btn-close-theme" class="sheet-close">完成</button>
+        </div>
+        <div class="sheet-body">
+          <div class="theme-grid" id="theme-card-grid">
+            <!-- 经典暗光 -->
+            <div class="theme-card active" data-theme-id="default">
+              <div class="theme-preview-dots">
+                <span style="background: #090a0f;"></span>
+                <span style="background: #0a84ff;"></span>
+                <span style="background: #ffffff;"></span>
+              </div>
+              <div class="theme-card-info">
+                <h4>经典暗光 (iOS Dark)</h4>
+                <p>纯正苹果深空石墨黑与深邃极简光影</p>
+              </div>
+              <span class="theme-check">✓</span>
+            </div>
+
+            <!-- 原木风 -->
+            <div class="theme-card" data-theme-id="wood">
+              <div class="theme-preview-dots">
+                <span style="background: #251c14;"></span>
+                <span style="background: #d4a373;"></span>
+                <span style="background: #fefae0;"></span>
+              </div>
+              <div class="theme-card-info">
+                <h4>禅意原木 (Natural Wood)</h4>
+                <p>温暖胡桃木、橡木质感与棉麻自然温润</p>
+              </div>
+              <span class="theme-check">✓</span>
+            </div>
+
+            <!-- 粉红可爱系 -->
+            <div class="theme-card" data-theme-id="cute-pink">
+              <div class="theme-preview-dots">
+                <span style="background: #26111e;"></span>
+                <span style="background: #ff6584;"></span>
+                <span style="background: #fff0f5;"></span>
+              </div>
+              <div class="theme-card-info">
+                <h4>粉红可爱 (Kawaii Berry)</h4>
+                <p>草莓甜奶、柔和粉桃与梦幻甜美泡泡</p>
+              </div>
+              <span class="theme-check">✓</span>
+            </div>
+
+            <!-- 柠檬清新系 -->
+            <div class="theme-card" data-theme-id="lemon">
+              <div class="theme-preview-dots">
+                <span style="background: #102117;"></span>
+                <span style="background: #f5e027;"></span>
+                <span style="background: #fffb85;"></span>
+              </div>
+              <div class="theme-card-info">
+                <h4>柠檬清新 (Citrus Mint)</h4>
+                <p>清爽柠檬黄、薄荷苏打与活力盛夏风情</p>
+              </div>
+              <span class="theme-check">✓</span>
+            </div>
+
+            <!-- 拟态液态玻璃系 -->
+            <div class="theme-card" data-theme-id="liquid-glass">
+              <div class="theme-preview-dots">
+                <span style="background: #090e18;"></span>
+                <span style="background: #00f2fe;"></span>
+                <span style="background: #ffffff;"></span>
+              </div>
+              <div class="theme-card-info">
+                <h4>拟态液态玻璃 (Liquid Glass)</h4>
+                <p>流体虹彩高光、透光折射与未来感拟态</p>
+              </div>
+              <span class="theme-check">✓</span>
             </div>
           </div>
         </div>

@@ -7,7 +7,8 @@ const STORAGE_KEYS = {
   ENDLESS_BEST: 'chimp_endless_best',
   CUSTOM_BESTS: 'chimp_custom_bests',
   HISTORY: 'chimp_game_history',
-  SETTINGS: 'chimp_user_settings'
+  SETTINGS: 'chimp_user_settings',
+  THEME: 'chimp_theme'
 };
 
 class StorageManager {
@@ -116,6 +117,21 @@ class StorageManager {
     } catch (e) {
       return defaultSettings;
     }
+  }
+
+  // 皮肤主题存储
+  loadTheme() {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.THEME) || 'default';
+    } catch (e) {
+      return 'default';
+    }
+  }
+
+  saveTheme(themeId) {
+    try {
+      localStorage.setItem(STORAGE_KEYS.THEME, themeId);
+    } catch (e) {}
   }
 
   // 计算大脑段位评级 (Ayumu Quotient)
