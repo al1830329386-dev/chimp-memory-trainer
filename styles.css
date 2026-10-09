@@ -73,6 +73,13 @@
   touch-action: manipulation;
 }
 
+html {
+  height: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   background-color: var(--ios-bg);
@@ -81,32 +88,40 @@ body {
     radial-gradient(circle at 10% 85%, rgba(191, 90, 242, 0.08), transparent 35%);
   background-attachment: fixed;
   color: var(--ios-text);
-  min-height: 100vh;
+  height: 100%;
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   justify-content: center;
   align-items: stretch;
-  overflow-x: hidden;
+  overflow: hidden;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
-/* 主容器：模拟 iOS 应用视口规范 */
+/* 主容器：严格适配各种屏幕视口，固定组件且绝无滚动条 */
 .ios-app-container {
   width: 100%;
-  max-width: 520px;
-  min-height: 100vh;
+  max-width: 480px;
+  height: 100%;
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
-  padding: env(safe-area-inset-top, 16px) 18px env(safe-area-inset-bottom, 20px);
+  padding: env(safe-area-inset-top, 8px) 14px env(safe-area-inset-bottom, 8px);
+  box-sizing: border-box;
+  overflow: hidden;
   position: relative;
+  margin: 0 auto;
 }
 
-/* 导航栏 */
+/* 导航栏：固定紧凑高度 */
 .ios-navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 0 10px;
-  height: 52px;
+  padding: 4px 0;
+  height: 44px;
+  flex-shrink: 0;
 }
 
 .app-badge {
@@ -156,9 +171,10 @@ body {
   transform: scale(0.92);
 }
 
-/* iOS 分段选择器 (Segmented Control) */
+/* iOS 分段选择器 (Segmented Control)：紧凑固定 */
 .segmented-control-wrap {
-  margin: 6px 0 14px;
+  margin: 4px 0 8px;
+  flex-shrink: 0;
 }
 
 .segmented-control {
@@ -178,7 +194,7 @@ body {
   color: var(--ios-text-secondary);
   font-size: 13px;
   font-weight: 500;
-  padding: 7px 0;
+  padding: 6px 0;
   border-radius: 9px;
   cursor: pointer;
   transition: all 0.24s var(--ease-smooth);
@@ -191,7 +207,7 @@ body {
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* 顶部状态统计小组件 (iOS Widget) */
+/* 顶部状态统计小组件 (iOS Widget)：紧凑固定 */
 .glass-panel {
   background: var(--ios-surface);
   backdrop-filter: blur(25px);
@@ -205,15 +221,16 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 14px 18px;
-  margin-bottom: 16px;
+  padding: 8px 14px;
+  margin-bottom: 6px;
+  flex-shrink: 0;
 }
 
 .stat-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 1px;
 }
 
 .stat-label {
@@ -224,7 +241,7 @@ body {
 }
 
 .stat-value {
-  font-size: 22px;
+  font-size: clamp(18px, 4.2vw, 22px);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.5px;
@@ -237,26 +254,30 @@ body {
 
 .stat-divider {
   width: 1px;
-  height: 28px;
+  height: 24px;
   background: var(--ios-border);
 }
 
-/* 游戏舞台区域 */
+/* 游戏舞台区域：核心弹性居中，绝不强制撑出滚动条 */
 .game-stage {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
-  min-height: 380px;
-  margin: 6px 0;
+  overflow: hidden;
+  width: 100%;
+  padding: 2px 0;
+  box-sizing: border-box;
 }
 
 /* 状态提示横幅 */
 .status-banner {
-  margin-bottom: 14px;
+  margin-bottom: 6px;
   text-align: center;
+  flex-shrink: 0;
   animation: bannerFadeIn 0.3s var(--ease-smooth);
 }
 
@@ -265,19 +286,19 @@ body {
 }
 
 #banner-text {
-  font-size: 18px;
+  font-size: clamp(14px, 3.5vw, 17px);
   font-weight: 700;
   letter-spacing: -0.3px;
   color: var(--ios-text);
   display: inline-block;
-  padding: 4px 16px;
+  padding: 3px 14px;
   background: rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   border: 1px solid var(--ios-border);
 }
 
 .status-banner.counting #banner-text {
-  font-size: 32px;
+  font-size: clamp(24px, 6vw, 30px);
   font-weight: 800;
   color: var(--ios-primary);
   background: transparent;
@@ -286,38 +307,42 @@ body {
 }
 
 .banner-subtext {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--ios-text-secondary);
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
-/* 网格容器 */
+/* 网格容器：自适应当前屏幕视口高度与宽度的最小值，完美居中且严禁溢出 */
 .grid-container-outer {
-  width: 100%;
+  width: min(100%, calc(100dvh - 225px), 430px);
+  height: min(100%, calc(100dvh - 225px), 430px);
+  max-width: 100%;
+  max-height: 100%;
   aspect-ratio: 1 / 1;
-  max-width: 440px;
   position: relative;
   border-radius: var(--radius-lg);
+  flex-shrink: 1;
 }
 
 .game-grid {
   width: 100%;
   height: 100%;
   display: grid;
-  gap: 10px;
-  padding: 12px;
+  gap: clamp(4px, 1.4vw, 10px);
+  padding: clamp(6px, 1.8vw, 12px);
   background: rgba(20, 21, 28, 0.45);
   border-radius: var(--radius-lg);
   border: 1px solid var(--ios-border);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  box-sizing: border-box;
 }
 
-/* 动态网格尺寸 */
-.grid-3x3 { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 12px; }
-.grid-4x4 { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); gap: 10px; }
-.grid-5x5 { grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(5, 1fr); gap: 8px; }
-.grid-6x6 { grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr); gap: 6px; }
+/* 动态网格尺寸与弹性间距 */
+.grid-3x3 { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: clamp(6px, 2vw, 12px); }
+.grid-4x4 { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); gap: clamp(5px, 1.6vw, 10px); }
+.grid-5x5 { grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(5, 1fr); gap: clamp(4px, 1.2vw, 8px); }
+.grid-6x6 { grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr); gap: clamp(3px, 1vw, 6px); }
 
 /* 单个格子样式 */
 .grid-cell {
@@ -421,11 +446,12 @@ body {
   -webkit-backdrop-filter: blur(20px);
 }
 
-/* 就绪开始卡片 */
+/* 就绪开始卡片：自适应紧凑尺寸 */
 .start-card {
   text-align: center;
-  padding: 24px 22px;
-  max-width: 340px;
+  padding: clamp(14px, 3.5vw, 22px) clamp(12px, 3vw, 20px);
+  max-width: 330px;
+  width: 95%;
   animation: scaleCardIn 0.35s var(--ease-spring);
 }
 
@@ -433,17 +459,17 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 18px;
+  gap: 6px;
+  margin-bottom: clamp(10px, 2.8vw, 16px);
 }
 
 .icon-number {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
+  width: clamp(34px, 8.5vw, 42px);
+  height: clamp(34px, 8.5vw, 42px);
+  border-radius: 11px;
   background: #ffffff;
   color: #000000;
-  font-size: 18px;
+  font-size: clamp(15px, 4vw, 18px);
   font-weight: 800;
   display: flex;
   align-items: center;
@@ -453,27 +479,27 @@ body {
 
 .icon-arrow {
   color: var(--ios-text-secondary);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
 }
 
 .start-card h2 {
-  font-size: 21px;
+  font-size: clamp(17px, 4.5vw, 21px);
   font-weight: 700;
   letter-spacing: -0.4px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .start-card p {
-  font-size: 13px;
+  font-size: clamp(11.5px, 3vw, 13px);
   color: var(--ios-text-secondary);
-  line-height: 1.5;
-  margin-bottom: 22px;
+  line-height: 1.45;
+  margin-bottom: clamp(12px, 3vw, 18px);
 }
 
 .keyboard-hint {
-  margin-top: 14px;
-  font-size: 12px;
+  margin-top: 10px;
+  font-size: 11px;
   color: var(--ios-text-tertiary);
 }
 
@@ -483,33 +509,36 @@ body {
   border-radius: 5px;
   border: 1px solid var(--ios-border-subtle);
   font-family: inherit;
-  font-size: 11px;
+  font-size: 10.5px;
 }
 
-/* 结算弹窗卡片 */
+/* 结算弹窗卡片：自适应紧凑弹窗 */
 .glass-panel-popup {
-  background: rgba(28, 29, 36, 0.88);
+  background: rgba(28, 29, 36, 0.92);
   backdrop-filter: blur(35px);
   -webkit-backdrop-filter: blur(35px);
   border: 1px solid var(--ios-border);
   box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6);
   border-radius: var(--radius-xl);
-  padding: 26px 20px;
-  width: 90%;
-  max-width: 360px;
+  padding: clamp(14px, 3.5vw, 22px) clamp(12px, 3vw, 18px);
+  width: 92%;
+  max-width: 340px;
+  max-height: 96%;
+  overflow-y: auto;
   text-align: center;
   animation: scaleCardIn 0.35s var(--ease-spring);
+  box-sizing: border-box;
 }
 
 .result-icon-circle {
-  width: 54px;
-  height: 54px;
+  width: clamp(40px, 10vw, 50px);
+  height: clamp(40px, 10vw, 50px);
   border-radius: 50%;
-  margin: 0 auto 12px;
+  margin: 0 auto 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: clamp(18px, 4.8vw, 22px);
   font-weight: bold;
 }
 
@@ -526,36 +555,36 @@ body {
 }
 
 .result-card h2 {
-  font-size: 22px;
+  font-size: clamp(17px, 4.2vw, 20px);
   font-weight: 700;
   letter-spacing: -0.4px;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .result-card p {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--ios-text-secondary);
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .result-metrics {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 6px;
   background: rgba(255, 255, 255, 0.05);
-  padding: 12px 8px;
+  padding: 8px 6px;
   border-radius: var(--radius-sm);
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .metric-box {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .m-val {
-  font-size: 16px;
+  font-size: clamp(14px, 3.8vw, 16px);
   font-weight: 700;
   color: var(--ios-text);
   font-variant-numeric: tabular-nums;
@@ -570,14 +599,14 @@ body {
 .brain-rank-box {
   background: linear-gradient(135deg, rgba(10, 132, 255, 0.15), rgba(191, 90, 242, 0.12));
   border: 1px solid rgba(10, 132, 255, 0.3);
-  padding: 12px 14px;
+  padding: 8px 12px;
   border-radius: var(--radius-sm);
-  margin-bottom: 18px;
+  margin-bottom: 12px;
   text-align: left;
 }
 
 .rank-title {
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -587,10 +616,10 @@ body {
 }
 
 .rank-name {
-  font-size: 15px;
+  font-size: clamp(13px, 3.5vw, 14.5px);
   font-weight: 700;
   color: var(--ios-text);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .rank-tip {
@@ -651,13 +680,14 @@ body {
   transform: scale(0.97);
 }
 
-/* 底部状态 */
+/* 底部状态：紧凑固定 */
 .ios-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 4px 6px;
-  min-height: 44px;
+  padding: 4px 4px env(safe-area-inset-bottom, 4px);
+  height: 38px;
+  flex-shrink: 0;
 }
 
 .footer-hint {
