@@ -2,6 +2,8 @@
 
 > 基于著名的京都大学灵长类研究所**“黑猩猩阿优木（Ayumu）瞬间工作记忆测试”**打造的 iOS 极简风脑力训练应用。
 
+🔗 **在线游玩地址**：[https://al1830329386-dev.github.io/chimp-memory-trainer/](https://al1830329386-dev.github.io/chimp-memory-trainer/)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Zero Dependency](https://img.shields.io/badge/Dependencies-0-success.svg)]()
 [![PWA Ready](https://img.shields.io/badge/PWA-iOS%20Full%20Screen-orange.svg)]()
