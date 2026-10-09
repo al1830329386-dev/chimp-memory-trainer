@@ -1,0 +1,1229 @@
+/* ==========================================================================
+   瞬时脑力 (Chimp Memory Trainer) - iOS 极简美学设计规范
+   ========================================================================== */
+
+:root {
+  --ios-bg: #090a0f;
+  --ios-surface: rgba(28, 29, 36, 0.72);
+  --ios-surface-solid: #1c1d24;
+  --ios-card-glass: rgba(255, 255, 255, 0.07);
+  --ios-card-hover: rgba(255, 255, 255, 0.12);
+  --ios-border: rgba(255, 255, 255, 0.12);
+  --ios-border-subtle: rgba(255, 255, 255, 0.06);
+
+  --ios-primary: #0a84ff;
+  --ios-primary-hover: #0071e3;
+  --ios-success: #30d158;
+  --ios-warning: #ffd60a;
+  --ios-danger: #ff453a;
+  --ios-purple: #bf5af2;
+  
+  --ios-text: #ffffff;
+  --ios-text-secondary: rgba(235, 235, 245, 0.65);
+  --ios-text-tertiary: rgba(235, 235, 245, 0.35);
+
+  --tile-bg: rgba(255, 255, 255, 0.09);
+  --tile-border: rgba(255, 255, 255, 0.16);
+  --tile-active-bg: rgba(255, 255, 255, 0.94);
+  --tile-active-text: #090a0f;
+  --tile-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 26px;
+  --radius-xl: 32px;
+
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 亮色模式适配 (可选通过系统偏好设定或类名切换) */
+@media (prefers-color-scheme: light) {
+  :root.auto-theme {
+    --ios-bg: #f2f2f7;
+    --ios-surface: rgba(255, 255, 255, 0.82);
+    --ios-surface-solid: #ffffff;
+    --ios-card-glass: rgba(0, 0, 0, 0.04);
+    --ios-card-hover: rgba(0, 0, 0, 0.08);
+    --ios-border: rgba(0, 0, 0, 0.08);
+    --ios-border-subtle: rgba(0, 0, 0, 0.04);
+
+    --ios-primary: #007aff;
+    --ios-primary-hover: #0062cc;
+    --ios-text: #000000;
+    --ios-text-secondary: rgba(60, 60, 67, 0.65);
+    --ios-text-tertiary: rgba(60, 60, 67, 0.35);
+
+    --tile-bg: rgba(0, 0, 0, 0.04);
+    --tile-border: rgba(0, 0, 0, 0.08);
+    --tile-active-bg: #ffffff;
+    --tile-active-text: #000000;
+    --tile-shadow: 0 6px 20px -3px rgba(0, 0, 0, 0.12);
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background-color: var(--ios-bg);
+  background-image: 
+    radial-gradient(circle at 50% -10%, rgba(10, 132, 255, 0.15), transparent 45%),
+    radial-gradient(circle at 10% 85%, rgba(191, 90, 242, 0.08), transparent 35%);
+  background-attachment: fixed;
+  color: var(--ios-text);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  overflow-x: hidden;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* 主容器：模拟 iOS 应用视口规范 */
+.ios-app-container {
+  width: 100%;
+  max-width: 520px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: env(safe-area-inset-top, 16px) 18px env(safe-area-inset-bottom, 20px);
+  position: relative;
+}
+
+/* 导航栏 */
+.ios-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0 10px;
+  height: 52px;
+}
+
+.app-badge {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--ios-primary);
+  background: rgba(10, 132, 255, 0.12);
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(10, 132, 255, 0.25);
+}
+
+.nav-title h1 {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  text-align: center;
+}
+
+.nav-right {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-button {
+  background: var(--ios-card-glass);
+  border: 1px solid var(--ios-border-subtle);
+  color: var(--ios-text);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-smooth);
+}
+
+.icon-button:hover {
+  background: var(--ios-card-hover);
+  transform: scale(1.05);
+}
+
+.icon-button:active {
+  transform: scale(0.92);
+}
+
+/* iOS 分段选择器 (Segmented Control) */
+.segmented-control-wrap {
+  margin: 6px 0 14px;
+}
+
+.segmented-control {
+  background: rgba(120, 120, 128, 0.16);
+  padding: 3px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  position: relative;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.segment-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--ios-text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 7px 0;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: all 0.24s var(--ease-smooth);
+}
+
+.segment-btn.active {
+  background: var(--ios-surface-solid);
+  color: var(--ios-text);
+  font-weight: 600;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* 顶部状态统计小组件 (iOS Widget) */
+.glass-panel {
+  background: var(--ios-surface);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid var(--ios-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.3);
+}
+
+.stats-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.stat-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ios-text-secondary);
+  letter-spacing: 0.2px;
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+}
+
+.stat-value.highlight {
+  color: var(--ios-primary);
+  text-shadow: 0 0 14px rgba(10, 132, 255, 0.5);
+}
+
+.stat-divider {
+  width: 1px;
+  height: 28px;
+  background: var(--ios-border);
+}
+
+/* 游戏舞台区域 */
+.game-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 380px;
+  margin: 6px 0;
+}
+
+/* 状态提示横幅 */
+.status-banner {
+  margin-bottom: 14px;
+  text-align: center;
+  animation: bannerFadeIn 0.3s var(--ease-smooth);
+}
+
+.status-banner.hidden {
+  display: none;
+}
+
+#banner-text {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--ios-text);
+  display: inline-block;
+  padding: 4px 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  border: 1px solid var(--ios-border);
+}
+
+.status-banner.counting #banner-text {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--ios-primary);
+  background: transparent;
+  border: none;
+  animation: countPulse 0.9s cubic-bezier(0.18, 0.89, 0.32, 1.28) infinite;
+}
+
+.banner-subtext {
+  font-size: 12px;
+  color: var(--ios-text-secondary);
+  margin-top: 4px;
+}
+
+/* 网格容器 */
+.grid-container-outer {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 440px;
+  position: relative;
+  border-radius: var(--radius-lg);
+}
+
+.game-grid {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(20, 21, 28, 0.45);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--ios-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* 动态网格尺寸 */
+.grid-3x3 { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 12px; }
+.grid-4x4 { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); gap: 10px; }
+.grid-5x5 { grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(5, 1fr); gap: 8px; }
+.grid-6x6 { grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr); gap: 6px; }
+
+/* 单个格子样式 */
+.grid-cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-md);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  cursor: default;
+  transition: transform 0.16s var(--ease-spring), background-color 0.2s ease, opacity 0.25s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* 3x3 ~ 6x6 字体与间距自适应适配 */
+.grid-3x3 .grid-cell { font-size: 34px; border-radius: var(--radius-md); }
+.grid-4x4 .grid-cell { font-size: 26px; border-radius: 14px; }
+.grid-5x5 .grid-cell { font-size: 22px; border-radius: 11px; }
+.grid-6x6 .grid-cell { font-size: 17px; border-radius: 8px; }
+
+/* 空置未分配数字的格子 */
+.grid-cell.empty {
+  background: var(--tile-bg);
+  border: 1px dashed rgba(255, 255, 255, 0.05);
+  opacity: 0.35;
+}
+
+/* 目标数字格子：处于显示曝光期 */
+.grid-cell.active.revealed {
+  background: var(--tile-active-bg);
+  color: var(--tile-active-text);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: var(--tile-shadow);
+  transform: scale(1);
+  animation: cellReveal 0.3s var(--ease-spring);
+}
+
+/* 目标数字格子：处于隐藏盲点期 (无字) */
+.grid-cell.active.masked {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.07));
+  border: 1px solid var(--tile-border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+
+.grid-cell.active.masked:hover {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.12));
+  transform: scale(1.02);
+}
+
+.grid-cell.active.masked:active {
+  transform: scale(0.92);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 正确点击后的状态 */
+.grid-cell.correct {
+  background: rgba(48, 209, 88, 0.22);
+  border: 1px solid rgba(48, 209, 88, 0.45);
+  color: var(--ios-success);
+  transform: scale(0.92);
+  opacity: 0.2;
+  pointer-events: none;
+  animation: cellCorrectPop 0.35s var(--ease-spring);
+}
+
+/* 错误点击后的状态 */
+.grid-cell.wrong {
+  background: rgba(255, 69, 58, 0.35) !important;
+  border: 1.5px solid var(--ios-danger) !important;
+  color: #fff !important;
+  animation: cellShake 0.45s ease-in-out;
+}
+
+/* 遮罩通用样式 */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-lg);
+  z-index: 20;
+  transition: opacity 0.3s var(--ease-smooth), visibility 0.3s;
+}
+
+.overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.glass-blur {
+  background: rgba(9, 10, 15, 0.76);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* 就绪开始卡片 */
+.start-card {
+  text-align: center;
+  padding: 24px 22px;
+  max-width: 340px;
+  animation: scaleCardIn 0.35s var(--ease-spring);
+}
+
+.hero-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.icon-number {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #000000;
+  font-size: 18px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.25);
+}
+
+.icon-arrow {
+  color: var(--ios-text-secondary);
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.start-card h2 {
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  margin-bottom: 8px;
+}
+
+.start-card p {
+  font-size: 13px;
+  color: var(--ios-text-secondary);
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+
+.keyboard-hint {
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--ios-text-tertiary);
+}
+
+.keyboard-hint kbd {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 5px;
+  border: 1px solid var(--ios-border-subtle);
+  font-family: inherit;
+  font-size: 11px;
+}
+
+/* 结算弹窗卡片 */
+.glass-panel-popup {
+  background: rgba(28, 29, 36, 0.88);
+  backdrop-filter: blur(35px);
+  -webkit-backdrop-filter: blur(35px);
+  border: 1px solid var(--ios-border);
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6);
+  border-radius: var(--radius-xl);
+  padding: 26px 20px;
+  width: 90%;
+  max-width: 360px;
+  text-align: center;
+  animation: scaleCardIn 0.35s var(--ease-spring);
+}
+
+.result-icon-circle {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.result-icon-circle.success {
+  background: rgba(48, 209, 88, 0.18);
+  color: var(--ios-success);
+  border: 1px solid rgba(48, 209, 88, 0.35);
+}
+
+.result-icon-circle.fail {
+  background: rgba(255, 69, 58, 0.18);
+  color: var(--ios-danger);
+  border: 1px solid rgba(255, 69, 58, 0.35);
+}
+
+.result-card h2 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  margin-bottom: 4px;
+}
+
+.result-card p {
+  font-size: 13px;
+  color: var(--ios-text-secondary);
+  margin-bottom: 16px;
+}
+
+.result-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 12px 8px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 14px;
+}
+
+.metric-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.m-val {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ios-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.m-lbl {
+  font-size: 10px;
+  color: var(--ios-text-secondary);
+}
+
+/* 认知段位标签框 */
+.brain-rank-box {
+  background: linear-gradient(135deg, rgba(10, 132, 255, 0.15), rgba(191, 90, 242, 0.12));
+  border: 1px solid rgba(10, 132, 255, 0.3);
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.rank-title {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--ios-primary);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.rank-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ios-text);
+  margin-bottom: 4px;
+}
+
+.rank-tip {
+  font-size: 11px !important;
+  color: var(--ios-text-secondary) !important;
+  margin-bottom: 0 !important;
+  line-height: 1.4;
+}
+
+.result-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* iOS 按钮体系 */
+.ios-btn-primary {
+  background: var(--ios-primary);
+  color: #ffffff;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 13px 20px;
+  border-radius: var(--radius-sm);
+  width: 100%;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(10, 132, 255, 0.35);
+  transition: all 0.2s var(--ease-smooth);
+}
+
+.ios-btn-primary:hover {
+  background: var(--ios-primary-hover);
+  transform: translateY(-1px);
+}
+
+.ios-btn-primary:active {
+  transform: scale(0.97);
+}
+
+.ios-btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--ios-text);
+  border: 1px solid var(--ios-border-subtle);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 11px 20px;
+  border-radius: var(--radius-sm);
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-smooth);
+}
+
+.ios-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.ios-btn-secondary:active {
+  transform: scale(0.97);
+}
+
+/* 底部状态 */
+.ios-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 4px 6px;
+  min-height: 44px;
+}
+
+.footer-hint {
+  font-size: 13px;
+  color: var(--ios-text-secondary);
+}
+
+.sound-toggle-btn {
+  background: transparent;
+  border: none;
+  color: var(--ios-text-secondary);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.sound-toggle-btn:hover {
+  color: var(--ios-text);
+}
+
+/* iOS Sheet 抽屉模态框 */
+.ios-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  transition: opacity 0.3s var(--ease-smooth), visibility 0.3s;
+}
+
+.ios-modal-backdrop.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.ios-sheet {
+  background: var(--ios-surface-solid);
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  border-top: 1px solid var(--ios-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: sheetSlideUp 0.32s var(--ease-smooth);
+}
+
+.sheet-handle {
+  width: 36px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 2px;
+  margin: 8px auto 4px;
+}
+
+.sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--ios-border-subtle);
+}
+
+.sheet-header h3 {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.sheet-close {
+  background: transparent;
+  border: none;
+  color: var(--ios-primary);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sheet-body {
+  padding: 16px 20px 32px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 设置项分组 */
+.settings-group {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.group-header {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--ios-text-secondary);
+  letter-spacing: 0.3px;
+}
+
+.group-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.row-label {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.row-val {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ios-primary);
+}
+
+.grid-size-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.pill-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--ios-border-subtle);
+  color: var(--ios-text);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 9px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-smooth);
+}
+
+.pill-btn.active {
+  background: var(--ios-primary);
+  border-color: var(--ios-primary);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* iOS 滑动条 (Slider) */
+.ios-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 3px;
+  outline: none;
+  margin: 8px 0 4px;
+}
+
+.ios-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+  transition: transform 0.15s ease;
+}
+
+.ios-slider::-webkit-slider-thumb:active {
+  transform: scale(1.18);
+}
+
+.slider-sublabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--ios-text-tertiary);
+}
+
+/* iOS 原生开关 (Switch Toggle) */
+.group-toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.toggle-label {
+  font-size: 14px;
+}
+
+.ios-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 28px;
+}
+
+.ios-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider.round {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: rgba(120, 120, 128, 0.32);
+  transition: .3s;
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s var(--ease-spring);
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+}
+
+input:checked + .slider.round {
+  background-color: var(--ios-success);
+}
+
+input:checked + .slider.round:before {
+  transform: translateX(20px);
+}
+
+/* 排行榜专用样式 */
+.mini-segment {
+  margin-bottom: 12px;
+}
+
+.benchmark-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(255, 214, 10, 0.12), rgba(255, 149, 0, 0.08));
+  border: 1px solid rgba(255, 214, 10, 0.3);
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 14px;
+}
+
+.b-avatar {
+  font-size: 28px;
+}
+
+.b-info h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ios-warning);
+}
+
+.b-info p {
+  font-size: 11px;
+  color: var(--ios-text-secondary);
+  line-height: 1.35;
+  margin-top: 2px;
+}
+
+.b-tag {
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(255, 214, 10, 0.2);
+  color: var(--ios-warning);
+  padding: 3px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 10px 14px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--ios-border-subtle);
+}
+
+.h-rank {
+  font-size: 14px;
+  font-weight: 700;
+  width: 26px;
+  color: var(--ios-text-secondary);
+}
+
+.h-rank.top1 { color: #ffd700; font-size: 17px; }
+.h-rank.top2 { color: #c0c0c0; font-size: 16px; }
+.h-rank.top3 { color: #cd7f32; font-size: 15px; }
+
+.h-detail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.h-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.h-sub {
+  font-size: 11px;
+  color: var(--ios-text-secondary);
+}
+
+.h-score {
+  text-align: right;
+}
+
+.h-main-score {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ios-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.h-time {
+  font-size: 11px;
+  color: var(--ios-text-tertiary);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 30px 10px;
+  color: var(--ios-text-tertiary);
+  font-size: 13px;
+}
+
+.clear-data-wrap {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.text-danger-btn {
+  background: transparent;
+  border: none;
+  color: var(--ios-danger);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 6px 12px;
+}
+
+/* 分享海报样式 (Apple Fitness 极简设计) */
+.share-card-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  max-width: 360px;
+  width: 100%;
+}
+
+.share-poster {
+  width: 100%;
+  background: linear-gradient(160deg, #161720 0%, #0d0e14 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-xl);
+  padding: 24px 22px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  position: relative;
+  overflow: hidden;
+}
+
+.share-poster::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle, rgba(10, 132, 255, 0.35), transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.poster-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--ios-text-secondary);
+  letter-spacing: 0.5px;
+  margin-bottom: 24px;
+}
+
+.poster-brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: var(--ios-text);
+}
+
+.brand-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--ios-primary);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--ios-primary);
+}
+
+.poster-score {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.score-num {
+  font-size: 52px;
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  background: linear-gradient(180deg, #ffffff, #cfd3dc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.score-unit {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ios-text-secondary);
+}
+
+.poster-rank-badge {
+  display: inline-block;
+  background: rgba(10, 132, 255, 0.16);
+  border: 1px solid rgba(10, 132, 255, 0.35);
+  color: var(--ios-primary);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 22px;
+}
+
+.poster-grid-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 22px;
+}
+
+.p-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: center;
+}
+
+.p-stat-v {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+
+.p-stat-k {
+  font-size: 10px;
+  color: var(--ios-text-secondary);
+}
+
+.poster-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid var(--ios-border-subtle);
+  padding-top: 14px;
+}
+
+.qr-placeholder {
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.poster-caption {
+  display: flex;
+  flex-direction: column;
+}
+
+.poster-caption strong {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.poster-caption small {
+  font-size: 10px;
+  color: var(--ios-text-secondary);
+}
+
+.share-btn-group {
+  width: 100%;
+}
+
+/* 动效关键帧 */
+@keyframes cellReveal {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes cellCorrectPop {
+  0% { transform: scale(0.92); opacity: 1; }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(0.92); opacity: 0.2; }
+}
+
+@keyframes cellShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+@keyframes countPulse {
+  0% { transform: scale(0.85); opacity: 0.5; }
+  50% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.9; }
+}
+
+@keyframes sheetSlideUp {
+  0% { transform: translateY(100%); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes scaleCardIn {
+  0% { transform: scale(0.92); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes bannerFadeIn {
+  0% { opacity: 0; transform: translateY(-4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}

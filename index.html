@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>瞬时脑力 | Chimp Memory Trainer</title>
+
+  <!-- PWA 与 iOS 原生独立 App 体验支持 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="瞬时脑力">
+  <meta name="theme-color" content="#090a0f">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/icon.svg">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ios-app-container">
+    <!-- 状态栏与顶部导航 -->
+    <header class="ios-navbar">
+      <div class="nav-left">
+        <span class="app-badge">Ayumu Memory</span>
+      </div>
+      <div class="nav-title">
+        <h1 id="mode-title">瞬时记忆测试</h1>
+      </div>
+      <div class="nav-right">
+        <button id="btn-leaderboard" class="icon-button" title="排行榜" aria-label="排行榜">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+            <path d="M4 22h16"/>
+            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+          </svg>
+        </button>
+        <button id="btn-settings" class="icon-button" title="难度设置" aria-label="设置">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="21" x2="4" y2="14"/>
+            <line x1="4" y1="10" x2="4" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12" y2="3"/>
+            <line x1="20" y1="21" x2="20" y2="16"/>
+            <line x1="20" y1="12" x2="20" y2="3"/>
+            <line x1="1" y1="14" x2="7" y2="14"/>
+            <line x1="9" y1="8" x2="15" y2="8"/>
+            <line x1="17" y1="16" x2="23" y2="16"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- 模式分段选择器 (Segmented Control) -->
+    <div class="segmented-control-wrap">
+      <div class="segmented-control" role="tablist">
+        <button class="segment-btn active" id="tab-custom" role="tab">自由训练</button>
+        <button class="segment-btn" id="tab-endless" role="tab">天梯挑战</button>
+      </div>
+    </div>
+
+    <!-- 顶部数据状态卡片 (iOS Widget 风格) -->
+    <section class="stats-card glass-panel">
+      <div class="stat-item">
+        <span class="stat-label">目标数字</span>
+        <span class="stat-value highlight" id="stat-target-number">1</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-label" id="label-middle-stat">已找到</span>
+        <span class="stat-value" id="stat-progress">0 / 5</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-label">最佳纪录</span>
+        <span class="stat-value" id="stat-record">0</span>
+      </div>
+    </section>
+
+    <!-- 游戏主舞台 -->
+    <main class="game-stage">
+      <!-- 倒计时 / 状态浮层提示 -->
+      <div id="game-status-banner" class="status-banner hidden">
+        <span id="banner-text">记住数字位置</span>
+        <div id="banner-subtext" class="banner-subtext">3 秒后数字将隐藏</div>
+      </div>
+
+      <!-- 游戏核心网格 -->
+      <div class="grid-container-outer">
+        <div id="game-grid" class="game-grid grid-4x4">
+          <!-- 格子由 JS 动态生成 -->
+        </div>
+
+        <!-- 初始就绪 / 开始遮罩 -->
+        <div id="start-overlay" class="overlay glass-blur">
+          <div class="start-card">
+            <div class="hero-icon">
+              <span class="icon-number">1</span>
+              <span class="icon-arrow">→</span>
+              <span class="icon-number">2</span>
+              <span class="icon-arrow">→</span>
+              <span class="icon-number">3</span>
+            </div>
+            <h2 id="start-title">准备好锻炼瞬间记忆了吗？</h2>
+            <p id="start-desc">倒计时 3 秒后记下随机分布的数字，随后凭记忆从小到大依次点击无字卡片。</p>
+            <button id="btn-start-game" class="ios-btn-primary">
+              <span>开始挑战</span>
+            </button>
+            <div class="keyboard-hint">按 <kbd>空格键</kbd> 快速开始</div>
+          </div>
+        </div>
+
+        <!-- 结果结算卡片 -->
+        <div id="result-overlay" class="overlay glass-blur hidden">
+          <div class="result-card glass-panel-popup">
+            <div id="result-badge-icon" class="result-icon-circle success">✓</div>
+            <h2 id="result-title">挑战成功！</h2>
+            <p id="result-desc">你成功记住了所有数字的位置</p>
+
+            <!-- 成绩指标统计 -->
+            <div class="result-metrics">
+              <div class="metric-box">
+                <span class="m-val" id="metric-numbers">5</span>
+                <span class="m-lbl">数字总数</span>
+              </div>
+              <div class="metric-box">
+                <span class="m-val" id="metric-time">1.24s</span>
+                <span class="m-lbl">总用时</span>
+              </div>
+              <div class="metric-box">
+                <span class="m-val" id="metric-avg-speed">248ms</span>
+                <span class="m-lbl">平均单格反应</span>
+              </div>
+            </div>
+
+            <!-- 认知段位标签 -->
+            <div class="brain-rank-box" id="result-rank-box">
+              <span class="rank-title">大脑段位评估</span>
+              <div class="rank-name" id="rank-name">普通人类 (Normal Human)</div>
+              <p class="rank-tip" id="rank-tip">你的工作记忆处于标准成年人区间，继续练习可突破极限！</p>
+            </div>
+
+            <!-- 操作按钮组 -->
+            <div class="result-actions">
+              <button id="btn-play-again" class="ios-btn-primary">下一关 / 再试一次</button>
+              <button id="btn-share-result" class="ios-btn-secondary">生成战绩卡</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 底部状态与音量控制 -->
+    <footer class="ios-footer">
+      <div class="footer-hint" id="game-live-hint">
+        点击“开始挑战”激活记忆
+      </div>
+      <button id="btn-sound-toggle" class="sound-toggle-btn" title="声音开关">
+        <svg id="icon-sound-on" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+        </svg>
+        <svg id="icon-sound-off" class="hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <line x1="23" y1="9" x2="17" y2="15"/>
+          <line x1="17" y1="9" x2="23" y2="15"/>
+        </svg>
+      </button>
+    </footer>
+
+    <!-- 设置抽屉 (iOS Sheet 风格) -->
+    <div id="modal-settings" class="ios-modal-backdrop hidden">
+      <div class="ios-sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <h3>训练设置</h3>
+          <button id="btn-close-settings" class="sheet-close">完成</button>
+        </div>
+        <div class="sheet-body">
+          <!-- 网格大小选择 -->
+          <div class="settings-group">
+            <div class="group-header">网格规格 (同时存在的格子总数)</div>
+            <div class="grid-size-options" id="grid-size-selector">
+              <button class="pill-btn" data-size="3">3 × 3 (9格)</button>
+              <button class="pill-btn active" data-size="4">4 × 4 (16格)</button>
+              <button class="pill-btn" data-size="5">5 × 5 (25格)</button>
+              <button class="pill-btn" data-size="6">6 × 6 (36格)</button>
+            </div>
+          </div>
+
+          <!-- 数字数量滑动条 -->
+          <div class="settings-group">
+            <div class="group-row">
+              <span class="row-label">数字数量</span>
+              <span class="row-val" id="val-num-count">5 个</span>
+            </div>
+            <input type="range" id="slider-num-count" min="3" max="12" value="5" step="1" class="ios-slider">
+            <div class="slider-sublabels">
+              <span>3 (入门)</span>
+              <span>8 (挑战)</span>
+              <span id="slider-max-lbl">12 (极限)</span>
+            </div>
+          </div>
+
+          <!-- 曝光记忆时间滑动条 -->
+          <div class="settings-group">
+            <div class="group-row">
+              <span class="row-label">数字曝光记忆时间</span>
+              <span class="row-val" id="val-flash-time">3.0 秒</span>
+            </div>
+            <input type="range" id="slider-flash-time" min="0.5" max="5.0" value="3.0" step="0.5" class="ios-slider">
+            <div class="slider-sublabels">
+              <span>0.5s (神级闪记)</span>
+              <span>3.0s (标准)</span>
+              <span>5.0s (轻松)</span>
+            </div>
+          </div>
+
+          <!-- 准备倒计时 -->
+          <div class="settings-group">
+            <div class="group-row">
+              <span class="row-label">开始前准备倒计时</span>
+              <span class="row-val" id="val-countdown-time">3 秒</span>
+            </div>
+            <input type="range" id="slider-countdown-time" min="1" max="5" value="3" step="1" class="ios-slider">
+          </div>
+
+          <!-- 辅助设置 -->
+          <div class="settings-group">
+            <div class="group-toggle-row">
+              <span class="toggle-label">点击震动反馈 (支持的手机)</span>
+              <label class="ios-switch">
+                <input type="checkbox" id="toggle-vibrate" checked>
+                <span class="slider round"></span>
+              </label>
+            </div>
+            <div class="group-toggle-row">
+              <span class="toggle-label">高连击上行音阶</span>
+              <label class="ios-switch">
+                <input type="checkbox" id="toggle-scale-pitch" checked>
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 排行榜弹窗 -->
+    <div id="modal-leaderboard" class="ios-modal-backdrop hidden">
+      <div class="ios-sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <h3>脑力名人堂</h3>
+          <button id="btn-close-leaderboard" class="sheet-close">关闭</button>
+        </div>
+        <div class="sheet-body">
+          <!-- 排行榜分类选项 -->
+          <div class="segmented-control mini-segment" role="tablist">
+            <button class="segment-btn active" id="tab-lb-endless">天梯最高纪录</button>
+            <button class="segment-btn" id="tab-lb-custom">自由极速纪录</button>
+          </div>
+
+          <!-- 天梯记录列表 -->
+          <div id="lb-endless-content" class="leaderboard-view">
+            <div class="benchmark-card">
+              <div class="b-avatar">🦍</div>
+              <div class="b-info">
+                <h4>京都大学黑猩猩阿优木 (Ayumu)</h4>
+                <p>9个数字仅需 210ms 即可完全记忆无误并瞬时全连！</p>
+              </div>
+              <span class="b-tag">神级基准</span>
+            </div>
+            <div class="history-list" id="endless-history-list">
+              <!-- 动态填入 -->
+            </div>
+          </div>
+
+          <!-- 自由模式记录列表 -->
+          <div id="lb-custom-content" class="leaderboard-view hidden">
+            <div class="history-list" id="custom-history-list">
+              <!-- 动态填入 -->
+            </div>
+          </div>
+
+          <div class="clear-data-wrap">
+            <button id="btn-clear-history" class="text-danger-btn">清空所有历史数据</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 战绩海报卡片弹窗 (支持长按或点击保存/复制) -->
+    <div id="modal-sharecard" class="ios-modal-backdrop hidden">
+      <div class="share-card-container">
+        <div class="share-poster" id="share-poster-node">
+          <div class="poster-header">
+            <div class="poster-brand">
+              <span class="brand-dot"></span>
+              <span>CHIMP COGNITIVE TEST</span>
+            </div>
+            <span class="poster-date" id="poster-date">2026.10.09</span>
+          </div>
+          <div class="poster-score">
+            <span class="score-num" id="poster-score-num">9</span>
+            <span class="score-unit">个数字已攻克</span>
+          </div>
+          <div class="poster-rank-badge" id="poster-rank-text">
+            🌟 超越黑猩猩阿优木
+          </div>
+          <div class="poster-grid-stats">
+            <div class="p-stat">
+              <span class="p-stat-v" id="poster-time-val">1.18s</span>
+              <span class="p-stat-k">总耗时</span>
+            </div>
+            <div class="p-stat">
+              <span class="p-stat-v" id="poster-speed-val">131ms</span>
+              <span class="p-stat-k">单格反应</span>
+            </div>
+            <div class="p-stat">
+              <span class="p-stat-v" id="poster-accuracy-val">100%</span>
+              <span class="p-stat-k">准确率</span>
+            </div>
+          </div>
+          <div class="poster-footer">
+            <div class="qr-placeholder">
+              <span>🧠</span>
+            </div>
+            <div class="poster-caption">
+              <strong>瞬时工作记忆训练器</strong>
+              <small>测试你的瞬间记忆广度与专注力</small>
+            </div>
+          </div>
+        </div>
+        <div class="share-btn-group">
+          <button id="btn-close-share" class="ios-btn-primary">关闭</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 引入模块脚本 -->
+  <script src="js/audio.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
