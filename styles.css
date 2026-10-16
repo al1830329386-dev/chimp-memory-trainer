@@ -692,6 +692,51 @@ body {
   transform: scale(0.97);
 }
 
+.result-actions-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.result-actions-row > * {
+  flex: 1;
+  min-width: 0;
+}
+
+.result-actions-row .ios-btn-secondary,
+.result-actions-row .ios-btn-tertiary {
+  padding: 10.5px 6px;
+  font-size: 13.5px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.ios-btn-tertiary {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--ios-text-secondary);
+  border: 1px solid var(--ios-border-subtle);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 11px 16px;
+  border-radius: var(--radius-sm);
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-smooth);
+}
+
+.ios-btn-tertiary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--ios-text);
+  border-color: var(--ios-border);
+}
+
+.ios-btn-tertiary:active {
+  transform: scale(0.97);
+}
+
 /* 底部状态：紧凑固定 */
 .ios-footer {
   display: flex;

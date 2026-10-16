@@ -153,10 +153,19 @@
               <p class="rank-tip" id="rank-tip">你的工作记忆处于标准成年人区间，继续练习可突破极限！</p>
             </div>
 
-            <!-- 操作按钮组 -->
-            <div class="result-actions">
+            <!-- 操作按钮组 (成功模式) -->
+            <div id="result-success-actions" class="result-actions">
               <button id="btn-play-again" class="ios-btn-primary">下一关 / 再试一次</button>
               <button id="btn-share-result" class="ios-btn-secondary">生成战绩卡</button>
+            </div>
+
+            <!-- 操作按钮组 (失败模式：重试本题 / 换一题 / 调整难度) -->
+            <div id="result-fail-actions" class="result-actions hidden">
+              <button id="btn-retry-same" class="ios-btn-primary">🔁 重试本题 (相同位置)</button>
+              <div class="result-actions-row">
+                <button id="btn-new-round" class="ios-btn-secondary">🎲 换一题</button>
+                <button id="btn-back-menu" class="ios-btn-tertiary">⚙️ 调整难度</button>
+              </div>
             </div>
           </div>
         </div>

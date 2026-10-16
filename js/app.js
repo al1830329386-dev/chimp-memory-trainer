@@ -40,6 +40,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const elRankTip = document.getElementById('rank-tip');
   const elBtnPlayAgain = document.getElementById('btn-play-again');
   const elBtnShareResult = document.getElementById('btn-share-result');
+  const elResultSuccessActions = document.getElementById('result-success-actions');
+  const elResultFailActions = document.getElementById('result-fail-actions');
+  const elBtnRetrySame = document.getElementById('btn-retry-same');
+  const elBtnNewRound = document.getElementById('btn-new-round');
+  const elBtnBackMenu = document.getElementById('btn-back-menu');
 
   // 底部控制
   const elLiveHint = document.getElementById('game-live-hint');
@@ -255,6 +260,10 @@ document.addEventListener('DOMContentLoaded', () => {
         elResultDesc.textContent = `完美记忆 ${summary.totalNumbers} 个数字的位置并按序命中`;
         elBtnPlayAgain.textContent = summary.mode === window.GAME_MODES.ENDLESS ? '进入下一关 ➔' : '再来一局';
         
+        // 显示成功专属操作组
+        elResultSuccessActions.classList.remove('hidden');
+        elResultFailActions.classList.add('hidden');
+
         // 若为天梯模式，关卡自动 +1
         if (summary.mode === window.GAME_MODES.ENDLESS) {
           game.endlessLevel++;
@@ -264,16 +273,17 @@ document.addEventListener('DOMContentLoaded', () => {
         elResultBadge.textContent = '✕';
         elResultTitle.textContent = '挑战失误';
         elResultDesc.textContent = `未能完全按顺序回忆出所有卡片`;
+
+        // 显示失败专属操作组
+        elResultSuccessActions.classList.add('hidden');
+        elResultFailActions.classList.remove('hidden');
+
         if (summary.mode === window.GAME_MODES.ENDLESS) {
           if (summary.endlessLives <= 0) {
             elResultDesc.textContent = `3 次机会已用尽，本轮天梯结束（攻克 ${summary.totalNumbers - 1} 个数字）`;
-            elBtnPlayAgain.textContent = '重新挑战天梯';
-            game.resetEndlessSession();
           } else {
-            elBtnPlayAgain.textContent = `继续挑战（剩余 ${summary.endlessLives} 命）`;
+            elResultDesc.textContent = `顺序记忆失误，剩余 ${summary.endlessLives} 命`;
           }
-        } else {
-          elBtnPlayAgain.textContent = '重试当前难度';
         }
       }
 
@@ -301,11 +311,36 @@ document.addEventListener('DOMContentLoaded', () => {
     game.startRound();
   });
 
-  // 再玩一次
+  // 成功时：再玩一次 / 下一关
   elBtnPlayAgain.addEventListener('click', () => {
     soundEngine.initAudioContext();
     elResultOverlay.classList.add('hidden');
     game.startRound();
+  });
+
+  // 失败时：重试本题（相同数字与位置，重新闪现强化记忆）
+  elBtnRetrySame.addEventListener('click', () => {
+    soundEngine.initAudioContext();
+    elResultOverlay.classList.add('hidden');
+    game.retrySameRound();
+  });
+
+  // 失败时：换一题（保持当前难度，重新洗牌生成新题）
+  elBtnNewRound.addEventListener('click', () => {
+    soundEngine.initAudioContext();
+    elResultOverlay.classList.add('hidden');
+    if (game.mode === window.GAME_MODES.ENDLESS && game.endlessLives <= 0) {
+      game.resetEndlessSession();
+    }
+    game.startRound();
+  });
+
+  // 失败时：调整难度 / 返回主菜单
+  elBtnBackMenu.addEventListener('click', () => {
+    soundEngine.initAudioContext();
+    elResultOverlay.classList.add('hidden');
+    game.resetToIdle();
+    openSettingsSheet();
   });
 
   // 模式切换
@@ -348,6 +383,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 设置面板开启与关闭函数
+  function openSettingsSheet() {
+    syncSettingsModal();
+    elModalSettings.classList.remove('hidden');
+  }
+
   function closeSettingsSheet() {
     elModalSettings.classList.add('hidden');
     storageManager.saveSettings(userSettings);
@@ -361,10 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  elBtnSettings.addEventListener('click', () => {
-    syncSettingsModal();
-    elModalSettings.classList.remove('hidden');
-  });
+  elBtnSettings.addEventListener('click', openSettingsSheet);
 
   elBtnCloseSettings.addEventListener('click', closeSettingsSheet);
 
@@ -639,7 +676,11 @@ document.addEventListener('DOMContentLoaded', () => {
       soundEngine.initAudioContext();
       if (!elResultOverlay.classList.contains('hidden')) {
         elResultOverlay.classList.add('hidden');
-        game.startRound();
+        if (lastFinishedSummary && !lastFinishedSummary.success) {
+          game.retrySameRound();
+        } else {
+          game.startRound();
+        }
       } else if (!elStartOverlay.classList.contains('hidden')) {
         game.startRound();
       }

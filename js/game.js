@@ -132,6 +132,44 @@ class ChimpGame {
     this.runCountdown(this.countdownSeconds);
   }
 
+  // 重试本题：保持完全相同的网格位置与数字排布，重新倒计时并闪现
+  retrySameRound() {
+    this.clearAllTimers();
+    const params = this.getCurrentParams();
+    const totalCells = params.gridSize * params.gridSize;
+
+    // 若无历史网格数据或尺寸不匹配，降级为常规开始
+    if (!this.gridData || this.gridData.length !== totalCells) {
+      this.startRound();
+      return;
+    }
+
+    // 严密保留所有格子的 isActive 与 number，仅重置消除与连击状态
+    this.gridData.forEach(cell => {
+      cell.isFound = false;
+    });
+
+    this.expectedNextNumber = 1;
+    this.comboCount = 0;
+    this.tapTimestamps = [];
+
+    // 若天梯生命已耗尽，为本次强化练习重置 1 命
+    if (this.mode === GAME_MODES.ENDLESS && this.endlessLives <= 0) {
+      this.endlessLives = 1;
+    }
+
+    // 通知前端重置网格 DOM（恢复初始空格子）
+    this.onProgressUpdate({
+      type: 'ROUND_START',
+      gridSize: params.gridSize,
+      count: params.count
+    });
+
+    // 重新开启倒计时与闪现记忆流程
+    this.setState(GAME_STATES.COUNTDOWN);
+    this.runCountdown(this.countdownSeconds);
+  }
+
   // 生成网格与随机洗牌数字
   setupGrid(size, count) {
     const totalCells = size * size;
